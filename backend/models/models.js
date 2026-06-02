@@ -1,0 +1,1 @@
+/// las "tablas" de la base de datos pero en código. Un archivo por tabla (Producto, Usuario, Venta, VentaProducto)

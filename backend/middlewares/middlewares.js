@@ -1,0 +1,1 @@
+///funciones que se ejecutan antes de llegar al controller. En tu caso dos: uno que verifica que el admin esté logueado, otro que valida que los datos que llegan estén bien

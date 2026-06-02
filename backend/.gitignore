@@ -1,0 +1,17 @@
+# Variables de entorno
+.env
+
+# Dependencias
+node_modules/
+
+# Imágenes subidas por los usuarios
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
