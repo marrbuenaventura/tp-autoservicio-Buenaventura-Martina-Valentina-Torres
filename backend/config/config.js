@@ -1,1 +1,0 @@
-/// la conexion a la base de datos se hace a través de una variable de entorno, que se llama DATABASE_URL, y si no existe, se conecta a una base de datos local llamada autoservicio.db
