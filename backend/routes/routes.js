@@ -1,1 +1,0 @@
-///las rutas de la API, tipo /api/productos. Conectan la URL con el controller correspondiente
