@@ -13,7 +13,7 @@ const app = express()
 app.use(cors())   // Middleware para permitir solicitudes desde cualquier origen (CORS)
 app.use(express.json()) // Middleware para parsear el cuerpo de las solicitudes como JSON
 app.use(loggerURL); // Middleware personalizado para loguear las URLs de las peticiones
-
+app.use(express.static("public"));
 
 
 app.get('/', (req, res) => {
