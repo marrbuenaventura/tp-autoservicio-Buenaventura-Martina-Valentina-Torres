@@ -48,7 +48,7 @@ getProductForm.addEventListener("submit", async event => {
         const htmlProducto = `
             <ul>
                 <li class="lista-producto">
-                    <img src="${producto.image}" alt="${producto.name}">
+                    <img src="http://localhost:3000/img/${producto.image}" alt="${producto.name}">
                     <p>Id: ${producto.id} / Nombre: ${producto.name} / <strong>Precio: $${producto.price}</strong></p>
                 </li>
             </ul>
