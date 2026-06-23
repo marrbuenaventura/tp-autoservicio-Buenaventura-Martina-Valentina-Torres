@@ -1,183 +1,108 @@
-
-const contenedorProductos = document.getElementById("contenedor-productos");
-const getProductForm = document.getElementById("getProduct-form");
-const contenedorForm = document.getElementById("contenedor-form");
-const urlBase = "http://localhost:3000/api/products";
+const contenedorProductos = document.getElementById("contenedor-productos")
+const getProductForm = document.getElementById("getProduct-form")
+const contenedorForm = document.getElementById("contenedor-form")
+const urlBase = "http://localhost:3000/api/products"
 
 getProductForm.addEventListener("submit", async event => {
-    event.preventDefault(); //Evitamos el envio por defecto HTML del formulario
+    event.preventDefault()
+    const idProd = event.target.idProd.value.trim()
 
-    // Optimizacion 1: Para extraer solamente un valor, como el id en nuestro miniformulario, podemos saltarnos el FormData + Object.fromEntries
-    const idProd = event.target.idProd.value.trim();
-
-    // Optimizacion 2: Nos aseguramos de que se haya enviado un id valido
     if (!idProd) {
-        mostrarMensaje("error", "Ingresá un id válido");
-        return;
+        mostrarMensaje("error", "Ingresá un id válido")
+        return
     }
-
-    
     try {
-        // Optimizacion 3: Guardamos en una variable aparte la URL base para no hardcodearla aca
-        const response = await fetch(`${urlBase}/${idProd}`);
-        console.log(response);
+        const response = await fetch(`${urlBase}/${idProd}`)
+        const datos = await response.json()
 
-        // Procesamos los datos que devuelve el servidor
-        const datos = await response.json();
-        console.log(datos);
-
-        // Optimizacion 4: Mostramos por pantalla el error (400 o 500) que nos devuelve el servidor
         if (!response.ok) {
-            mostrarError("error", data.message);
-            return;
+            mostrarMensaje("error", datos.message)
+            return
         }
-
-        const producto = datos.payload;
-
-        console.log(producto); 
-
-        renderizarProducto(producto);
-
+        renderizarProducto(datos.payload)
     } catch (error) {
-        console.error("Error al obtener el producto");
-
-        // Optimizacion 5: Mostramos errores de red (en el try catch del fetch no capturamos errores 400 o 500)
-        mostrarMensaje("error", "Error de conexion con el servidor")
+        mostrarMensaje("error", "Error de conexión con el servidor")
     }
-});
+})
 
 function renderizarProducto(producto) {
-    let htmlProducto = `
-    <ul>
-        <li class="lista-producto">
-            <img src="${producto.image}" alt="${producto.name}">
-            <p>Id: ${producto.id} / Nombre: ${producto.name} / <strong>Precio: $${producto.price}</strong></p>
-            <input type="button" id="updateProduct-button" value="Actualizar Producto">
-        </li>
-    </ul>
-    `;
-
-    contenedorProductos.innerHTML = htmlProducto;
-
-    const updateProductButton = document.getElementById("updateProduct-button");
-
-    updateProductButton.addEventListener("click", event => {
-        event.stopPropagation();
-
-        const confirmacion = confirm("Querés actualizar este producto?");
-
-        if(!confirmacion) {
-            alert("Actualizacion cancelada");
-        } else {
-            formularioPutProducto(event, producto);
+    contenedorProductos.innerHTML = `
+        <ul>
+            <li class="lista-producto">
+                <img src="http://localhost:3000/img/${producto.image}" alt="${producto.name}">
+                <p>Id: ${producto.id} / Nombre: ${producto.name} / <strong>Precio: $${producto.price}</strong></p>
+                <p>Categoría: ${producto.category} / Estado: ${producto.active ? 'Activo' : 'Inactivo'}</p>
+                <input type="button" id="updateProduct-button" value="Actualizar Producto">
+            </li>
+        </ul>
+    `
+    document.getElementById("updateProduct-button").addEventListener("click", event => {
+        event.stopPropagation()
+        if (confirm("¿Querés actualizar este producto?")) {
+            mostrarFormularioPut(event, producto)
         }
-    });
+    })
+}
+
+function mostrarFormularioPut(event, producto) {
+    event.stopPropagation()
+    // ahora el forms te deja actualizar todos los datos del producto, incluyendo el estado activo/inactivo y la categoría antes no se podia nose porq veremos si el profe aclara algo
+    contenedorForm.innerHTML = `
+        <hr>
+        <form id="updateProduct-form" class="form-alta">
+            <input type="hidden" name="id" value="${producto.id}">
+
+            <label for="nameProd">Nombre</label>
+            <input type="text" name="name" id="nameProd" value="${producto.name}" required>
+
+            <label for="imageProd">Imagen</label>
+            <input type="text" name="image" id="imageProd" value="${producto.image}" required>
+
+            <label for="categoryProd">Categoría</label>
+            <select name="category" id="categoryProd" required>
+                <option value="ropa" ${producto.category === 'ropa' ? 'selected' : ''}>Ropa</option>
+                <option value="zapatillas" ${producto.category === 'zapatillas' ? 'selected' : ''}>Zapatillas</option>
+            </select>
+
+            <label for="priceProd">Precio</label>
+            <input type="number" name="price" id="priceProd" value="${producto.price}" required>
+
+            <label for="activeProd">Estado</label>
+            <select name="active" id="activeProd">
+                <option value="1" ${producto.active == 1 ? 'selected' : ''}>Activo</option>
+                <option value="0" ${producto.active == 0 ? 'selected' : ''}>Inactivo</option>
+            </select>
+
+            <div>
+                <input type="submit" value="Actualizar producto">
+            </div>
+        </form>
+    `
+    document.getElementById("updateProduct-form").addEventListener("submit", actualizarProducto)
+}
+
+async function actualizarProducto(event) {
+    event.preventDefault()
+    const data = Object.fromEntries(new FormData(event.target).entries())
+
+    try {
+        const response = await fetch(`${urlBase}/${data.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        const result = await response.json()
+        if (!response.ok) {
+            mostrarMensaje("error", result.message)
+            return
+        }
+        mostrarMensaje("exito", result.message)
+    } catch (error) {
+        mostrarMensaje("error", "Error de conexión con el servidor")
+    }
 }
 
 function mostrarMensaje(tipo, mensaje) {
-    contenedorForm.innerHTML = "";
-    contenedorProductos.innerHTML = `
-        <p class="mensaje mensaje-${tipo}">${mensaje}</p>
-    `;
+    contenedorForm.innerHTML = ""
+    contenedorProductos.innerHTML = `<p class="mensaje mensaje-${tipo}">${mensaje}</p>`
 }
-
-// Funcion para realizar una operacion delete
-async function formularioPutProducto(event, producto) {
-    event.stopPropagation(); // Evitamos la propagacion de eventos
-    console.table(producto); // Comprobamos por consola que el producto llega correctamente
-
-    // Reciclamos el formulario de crear producto
-    const htmlForm = `
-    <hr>
-    <form id="updateProduct-form" class="form-alta">
-
-        <input type="hidden" name="id" value="${producto.id}">
-
-        <label for="nameProd">Nombre</label>
-        <input type="text" name="name" id="nameProd" value="${producto.name}" required>
-
-        <label for="imageProd">Imagen</label>
-        <input type="text" name="image" id="imageProd" value="${producto.image}" required>
-
-        <label for="categoryProd">Categoria</label>
-        <select name="category" id="categoryProd" required>
-            <option value="ropa">Ropa</option>
-            <option value="zapatillas">Zapatillas</option>
-        </select>
-
-        <label for="priceProd">Precio</label>
-        <input type="number" name="price" id="priceProd" value="${producto.price}" required>
-
-        <!-- Aca podemos hacer la baja logica que pide el TP -->
-        <label for="activeProd">Activo</label>
-        <select name="active" id="activeProd">
-            <option value="1">activo</option>
-            <option value="0">inactivo</option>
-        </select>
-        
-        <div>
-            <input type="submit" value="Actualizar producto">
-        </div>
-    </form>
-    `;
-
-    contenedorForm.innerHTML = htmlForm;
-
-    // Selecciono el formulario de actualizacion
-    const updateProductForm = document.getElementById("updateProduct-form");
-
-    updateProductForm.addEventListener("submit", event => {
-        actualizarProducto(event);
-    });
-}
-
-// Enviamos los datos del formulario al servidor
-async function actualizarProducto(event) {
-    event.preventDefault(); // Evitamos el envio por defecto del formulario
-
-    console.log(event.target); // Nos muestra por consola el formulario de actualizacion
-    // <form id="updateProduct-form" class="form-alta">
-
-    // Recojo los datos del formulario (del evento) en un objeto nativo FormData
-    const formData = new FormData(event.target);
-    console.log(formData);
-    // FormData(6) { id → "63", name → "Estrella Galicia", image → "https://sectorhostelero.com/2988-large_default/estrella-galicia-tercio-33cl-.webp", category → "food", price → "1000.00", active → "1" }
-
-    // Transformamos el objeto FormData en un objeto JS, porque queremos parsear estos datos a JSON.stringify()
-    const data = Object.fromEntries(formData.entries());
-    console.log(data);
-    // Object { id: "63", name: "Estrella Galicia", image: "https://sectorhostelero.com/2988-large_default/estrella-galicia-tercio-33cl-.webp", category: "food", price: "1000.00", active: "1" }
-
-    console.log(JSON.stringify(data)); // Esto es lo que le vamos a enviar a nuestro endpoint -> que posteriormente parseara este JSON con el middleware app.use(express.json())
-    // {"id":"63","name":"Estrella Galicia","image":"https://sectorhostelero.com/2988-large_default/estrella-galicia-tercio-33cl-.webp","category":"food","price":"1000.00","active":"1"}
-
-    try {
-        const response = await fetch("http://localhost:3000/api/products/", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        console.log(response);
-        const result = await response.json();
-
-        // Optimizacion 6: Filtramos respuesta no ok
-        if(!response.ok) {
-            mostrarMensaje("error", result.message);
-            return;
-        }
-
-
-        mostrarMensaje("exito", result.message);
-
-
-    } catch (error) {
-        console.error(error);
-
-        mostrarMensaje("error", error)
-    }
-
-}
-

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sport & Sweet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* despues hacer un archivo CSS aparte con los estilos de la pantalla cliente asi como tiene el administrador, pero por ahora lo dejo aca para que sea mas facil de probar */
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --rosa:#f9c6d0;
+    --lila:#ddb8f0;
+    --menta:#b8eadf;
+    --amarillo:#fdeea3;
+    --fondo:#fdf6f9;
+    --texto:#2d1f2e;
+    --gris:#9a8a9b;
+  }
+  body{
+    background:var(--fondo);
+    color:var(--texto);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* Fondo con manchas pastel */
+  .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.5;animation:blobFloat ease-in-out infinite;}
+  .blob1{width:500px;height:500px;background:var(--rosa);top:-150px;left:-100px;animation-duration:12s;}
+  .blob2{width:400px;height:400px;background:var(--lila);bottom:-100px;right:-100px;animation-duration:16s;animation-delay:-4s;}
+  .blob3{width:300px;height:300px;background:var(--menta);top:40%;left:40%;animation-duration:20s;animation-delay:-8s;}
+  .blob4{width:200px;height:200px;background:var(--amarillo);top:20%;right:10%;animation-duration:14s;animation-delay:-2s;}
+  @keyframes blobFloat{
+    0%,100%{transform:translate(0,0) scale(1);}
+    33%{transform:translate(20px,-20px) scale(1.05);}
+    66%{transform:translate(-15px,15px) scale(0.95);}
+  }
+
+  header{
+    position:relative;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 40px;
+  }
+  .logo-img{height:48px;object-fit:contain;}
+  .alumnos{
+    font-size:12px;color:var(--gris);
+    letter-spacing:1px;text-transform:uppercase;
+  }
+
+  .hero{
+    position:relative;z-index:10;
+    min-height:calc(100vh - 96px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 20px;text-align:center;
+  }
+
+  .eyebrow{
+    display:inline-block;
+    background:rgba(221,184,240,0.3);
+    border:1px solid rgba(221,184,240,0.5);
+    border-radius:100px;
+    padding:6px 18px;
+    font-size:12px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--gris);
+    margin-bottom:28px;
+    animation:fadeUp 0.7s ease both;
+  }
+
+  .titulo{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(56px,10vw,130px);
+    line-height:0.95;
+    font-style:italic;
+    color:var(--texto);
+    animation:fadeUp 0.7s ease 0.1s both;
+  }
+  .titulo .amp{
+    color:var(--lila);
+    display:inline-block;
+    filter:drop-shadow(0 4px 20px rgba(221,184,240,0.6));
+  }
+
+  .subtitulo{
+    font-size:16px;font-weight:300;
+    color:var(--gris);
+    margin-top:20px;margin-bottom:40px;
+    max-width:360px;
+    animation:fadeUp 0.7s ease 0.2s both;
+  }
+
+  .categorias{
+    display:flex;gap:10px;margin-bottom:40px;
+    animation:fadeUp 0.7s ease 0.3s both;
+  }
+  .cat-pill{
+    padding:10px 22px;border-radius:100px;
+    background:white;
+    border:1.5px solid rgba(0,0,0,0.08);
+    font-size:13px;font-weight:500;
+    color:var(--texto);
+    box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    transition:all 0.2s;cursor:default;
+  }
+  .cat-pill:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(221,184,240,0.4);
+    border-color:var(--lila);
+  }
+
+  .form-container{
+    background:rgba(255,255,255,0.7);
+    border:1.5px solid rgba(255,255,255,0.9);
+    border-radius:24px;
+    padding:40px;
+    width:100%;max-width:400px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 8px 40px rgba(249,198,208,0.25);
+    animation:fadeUp 0.7s ease 0.4s both;
+  }
+  .form-label{
+    display:block;font-size:13px;
+    color:var(--gris);
+    margin-bottom:12px;
+    letter-spacing:0.5px;
+  }
+  .form-input{
+    width:100%;
+    background:rgba(255,255,255,0.8);
+    border:1.5px solid rgba(0,0,0,0.08);
+    border-radius:14px;
+    padding:16px 20px;
+    color:var(--texto);
+    font-family:'DM Sans',sans-serif;
+    font-size:16px;
+    outline:none;
+    transition:all 0.2s;
+  }
+  .form-input::placeholder{color:rgba(0,0,0,0.2);}
+  .form-input:focus{
+    border-color:var(--lila);
+    box-shadow:0 0 0 4px rgba(221,184,240,0.2);
+  }
+  .form-input.error{
+    border-color:var(--rosa);
+    box-shadow:0 0 0 4px rgba(249,198,208,0.3);
+  }
+  .form-btn{
+    width:100%;margin-top:14px;
+    background:linear-gradient(135deg,var(--rosa),var(--lila));
+    color:var(--texto);
+    border:none;border-radius:14px;
+    padding:16px;
+    font-family:'DM Sans',sans-serif;
+    font-size:15px;font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+    box-shadow:0 4px 20px rgba(249,198,208,0.4);
+  }
+  .form-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 30px rgba(221,184,240,0.5);
+  }
+  .form-btn:active{transform:translateY(0);}
+
+  .footer-link{
+    position:fixed;bottom:20px;right:24px;z-index:10;
+    font-size:11px;color:rgba(0,0,0,0.2);
+    text-decoration:none;letter-spacing:1px;
+    transition:color 0.2s;
+  }
+  .footer-link:hover{color:var(--gris);}
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  @media(max-width:600px){
+    header{padding:20px 24px;}
+    .form-container{padding:28px 20px;}
+    .categorias{flex-wrap:wrap;justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+</div>
+
+<header>
+  <img class="logo-img" src="../assets/img/logo.png" alt="Sport & Sweet logo">
+  <div class="alumnos">Buenaventura · Torres</div>
+</header>
+
+<main class="hero">
+  <span class="eyebrow">✦ Autoservicio deportivo ✦</span>
+
+  <h1 class="titulo">
+    Sport<br><span class="amp">&</span><br>Sweet
+  </h1>
+
+  <p class="subtitulo">Tu ropa y zapatillas favoritas, en un solo lugar.</p>
+
+  <div class="categorias">
+    <div class="cat-pill">Zapatillas</div>
+    <div class="cat-pill">Ropa</div>
+  </div>
+
+  <div class="form-container">
+    <label class="form-label" for="nombre">¿Cómo te llamás?</label>
+    <input
+      class="form-input"
+      type="text"
+      id="nombre"
+      placeholder="Tu nombre..."
+      autocomplete="off"
+    >
+    <button class="form-btn" onclick="continuar()">Ver productos →</button>
+  </div>
+</main>
+
+<a class="footer-link" href="http://localhost:3000/admin/login">Administración</a>
+
+<script>
+  /* despues psasar a un archivo JS aparte, pero por ahora lo dejo aca para que sea mas facil de probar */
+function continuar() {
+  const input = document.getElementById('nombre')
+  const nombre = input.value.trim()
+  if (!nombre) {
+    input.classList.add('error')
+    input.focus()
+    setTimeout(() => input.classList.remove('error'), 1500)
+    return
+  }
+  sessionStorage.setItem('nombreUsuario', nombre)
+  window.location.href = 'productos.html'
+}
+document.getElementById('nombre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') continuar()
+})
+</script>
+
+</body>
+</html>

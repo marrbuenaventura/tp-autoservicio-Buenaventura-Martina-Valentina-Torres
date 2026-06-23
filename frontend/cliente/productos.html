@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sport & Sweet · Productos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* despues hacer un archivo CSS aparte con los estilos de la pantalla cliente asi como tiene el administrador, pero por ahora lo dejo aca para que sea mas facil de probar */
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --rosa:#f9c6d0;
+    --lila:#ddb8f0;
+    --menta:#b8eadf;
+    --amarillo:#fdeea3;
+    --fondo:#fdf6f9;
+    --texto:#2d1f2e;
+    --gris:#9a8a9b;
+  }
+  body{
+    background:var(--fondo);
+    color:var(--texto);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* Fondo con manchas pastel */
+  .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.5;animation:blobFloat ease-in-out infinite;}
+  .blob1{width:500px;height:500px;background:var(--rosa);top:-150px;left:-100px;animation-duration:12s;}
+  .blob2{width:400px;height:400px;background:var(--lila);bottom:-100px;right:-100px;animation-duration:16s;animation-delay:-4s;}
+  .blob3{width:300px;height:300px;background:var(--menta);top:40%;left:40%;animation-duration:20s;animation-delay:-8s;}
+  .blob4{width:200px;height:200px;background:var(--amarillo);top:20%;right:10%;animation-duration:14s;animation-delay:-2s;}
+  @keyframes blobFloat{
+    0%,100%{transform:translate(0,0) scale(1);}
+    33%{transform:translate(20px,-20px) scale(1.05);}
+    66%{transform:translate(-15px,15px) scale(0.95);}
+  }
+
+  header{
+    position:relative;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 40px;
+  }
+  .logo-img{height:48px;object-fit:contain;}
+  .header-right{display:flex;align-items:center;gap:24px;}
+  .saludo{font-size:13px;color:var(--gris);}
+  .saludo strong{color:var(--texto);}
+
+  .cart-btn{
+    position:relative;
+    width:46px;height:46px;
+    border-radius:50%;
+    background:white;
+    border:1.5px solid rgba(0,0,0,0.08);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    transition:all 0.2s;
+  }
+  .cart-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(221,184,240,0.4);
+    border-color:var(--lila);
+  }
+  .cart-btn svg{width:20px;height:20px;stroke:var(--texto);}
+  .cart-count{
+    position:absolute;top:-6px;right:-6px;
+    background:linear-gradient(135deg,var(--rosa),var(--lila));
+    color:var(--texto);
+    font-size:11px;font-weight:500;
+    min-width:20px;height:20px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 4px;
+    box-shadow:0 2px 8px rgba(249,198,208,0.5);
+  }
+
+  main{
+    position:relative;z-index:10;
+    padding:20px 40px 80px;
+    max-width:1100px;
+    margin:0 auto;
+  }
+
+  .titulo-page{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(36px,6vw,56px);
+    font-style:italic;
+    margin-bottom:8px;
+    animation:fadeUp 0.7s ease both;
+  }
+  .subtitulo-page{
+    font-size:14px;color:var(--gris);
+    margin-bottom:40px;
+    animation:fadeUp 0.7s ease 0.1s both;
+  }
+
+  .seccion{margin-bottom:56px;}
+  .seccion-header{
+    display:flex;align-items:baseline;gap:14px;
+    margin-bottom:22px;
+  }
+  .seccion-titulo{
+    font-family:'Playfair Display',serif;
+    font-size:28px;font-style:italic;
+  }
+  .seccion-linea{
+    flex:1;height:1px;
+    background:linear-gradient(90deg,rgba(0,0,0,0.1),transparent);
+  }
+
+  .grid-productos{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:20px;
+  }
+
+  .card{
+    background:rgba(255,255,255,0.75);
+    border:1.5px solid rgba(255,255,255,0.9);
+    border-radius:20px;
+    padding:18px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 4px 24px rgba(249,198,208,0.18);
+    transition:all 0.25s;
+    animation:fadeUp 0.6s ease both;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 32px rgba(221,184,240,0.3);
+  }
+  .card-img{
+    width:100%;height:150px;
+    border-radius:14px;
+    object-fit:cover;
+    margin-bottom:14px;
+    background:linear-gradient(135deg,var(--rosa),var(--lila));
+  }
+  .card-nombre{font-size:15px;font-weight:500;margin-bottom:4px;}
+  .card-precio{
+    font-size:16px;font-weight:500;
+    color:var(--texto);
+    margin-bottom:14px;
+  }
+  .card-btn{
+    width:100%;
+    background:linear-gradient(135deg,var(--rosa),var(--lila));
+    color:var(--texto);
+    border:none;border-radius:12px;
+    padding:11px;
+    font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .card-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(221,184,240,0.4);}
+  .card-btn:active{transform:translateY(0);}
+  .card-btn.agregado{background:var(--menta);}
+  .error-msg{
+    color:var(--gris);
+    font-size:13px;
+    grid-column:1/-1;
+  }
+
+  /* Drawer carrito */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(45,31,46,0.3);
+    z-index:90;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s;
+  }
+  .overlay.show{opacity:1;pointer-events:auto;}
+
+  .drawer{
+    position:fixed;top:0;right:-380px;
+    width:360px;height:100vh;
+    background:var(--fondo);
+    z-index:100;
+    box-shadow:-10px 0 40px rgba(0,0,0,0.15);
+    transition:right 0.35s ease;
+    display:flex;flex-direction:column;
+  }
+  .drawer.show{right:0;}
+  .drawer-header{
+    padding:24px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+  .drawer-titulo{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;}
+  .drawer-cerrar{
+    background:none;border:none;cursor:pointer;
+    font-size:20px;color:var(--gris);
+  }
+  .drawer-body{flex:1;overflow-y:auto;padding:16px 24px;}
+  .drawer-item{
+    display:flex;gap:12px;align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid rgba(0,0,0,0.05);
+  }
+  .drawer-item img{width:54px;height:54px;border-radius:10px;object-fit:cover;}
+  .drawer-item-info{flex:1;}
+  .drawer-item-nombre{font-size:13px;font-weight:500;}
+  .drawer-item-precio{font-size:12px;color:var(--gris);}
+  .drawer-item-qty{
+    display:flex;align-items:center;gap:8px;
+    margin-top:6px;
+  }
+  .qty-btn{
+    width:22px;height:22px;border-radius:50%;
+    border:1px solid rgba(0,0,0,0.1);background:white;
+    cursor:pointer;font-size:13px;line-height:1;
+  }
+  .drawer-vacio{
+    text-align:center;color:var(--gris);
+    font-size:13px;padding:40px 0;
+  }
+  .drawer-footer{
+    padding:20px 24px;
+    border-top:1px solid rgba(0,0,0,0.06);
+  }
+  .drawer-total{
+    display:flex;justify-content:space-between;
+    font-size:15px;font-weight:500;
+    margin-bottom:14px;
+  }
+  .drawer-btn{
+    width:100%;
+    background:linear-gradient(135deg,var(--rosa),var(--lila));
+    color:var(--texto);
+    border:none;border-radius:14px;
+    padding:14px;
+    font-family:'DM Sans',sans-serif;
+    font-size:14px;font-weight:500;
+    cursor:pointer;
+  }
+
+  .footer-link{
+    position:fixed;bottom:20px;right:24px;z-index:10;
+    font-size:11px;color:rgba(0,0,0,0.2);
+    text-decoration:none;letter-spacing:1px;
+  }
+  .footer-link:hover{color:var(--gris);}
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(16px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  @media(max-width:600px){
+    header{padding:18px 20px;}
+    main{padding:16px 20px 80px;}
+    .drawer{width:90%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+</div>
+
+<header>
+  <img class="logo-img" src="../assets/img/logo.png" alt="Sport & Sweet logo">
+  <div class="header-right">
+    <span class="saludo">Hola, <strong id="nombreUsuario">!</strong></span>
+    <button class="cart-btn" onclick="toggleDrawer(true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <span class="cart-count" id="cartCount" style="display:none">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <h1 class="titulo-page">Nuestros productos</h1>
+  <p class="subtitulo-page">Elegi lo que más te guste y agregalo al carrito.</p>
+
+  <section class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-titulo">Zapatillas</span>
+      <div class="seccion-linea"></div>
+    </div>
+    <div class="grid-productos" id="gridZapatillas"></div>
+  </section>
+
+  <section class="seccion">
+    <div class="seccion-header">
+      <span class="seccion-titulo">Ropa</span>
+      <div class="seccion-linea"></div>
+    </div>
+    <div class="grid-productos" id="gridRopa"></div>
+  </section>
+</main>
+
+<a class="footer-link" href="../index.html">Administración</a>
+
+<div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-titulo">Tu carrito</span>
+    <button class="drawer-cerrar" onclick="toggleDrawer(false)">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer">
+    <div class="drawer-total">
+      <span>Total</span>
+      <span id="drawerTotal">$0</span>
+    </div>
+    <button class="drawer-btn" onclick="finalizarCompra()">Finalizar compra</button>
+  </div>
+</aside>
+
+<script>
+/* despues pasar a un archivo JS aparte, pero por ahora lo dejo aca para que sea mas facil de probar */
+/* ===== Conexión con el back ===== */
+const urlBase = "http://localhost:3000/api/products";
+let productos = []; // se llena con el fetch
+
+const CATEGORIA_ZAPATILLAS = "zapatillas";
+const CATEGORIA_ROPA = "Ropa";
+
+async function cargarProductos() {
+  try {
+    const response = await fetch(urlBase);
+    const data = await response.json();
+
+    if (!response.ok) {
+      mostrarErrorProductos(data.message || "No se pudieron cargar los productos");
+      return;
+    }
+
+    // Normalizamos los nombres de campos del back a los que usa el render
+    productos = data.payload.map(p => ({
+      id: p.id,
+      nombre: p.name,
+      precio: Number(p.price),
+      categoria: p.category,
+      img: p.image ? `http://localhost:3000/img/${p.image}` : ""
+    }));
+
+    renderProductos();
+    renderDrawer(); // por si el carrito ya tenía ids guardados de antes
+  } catch (error) {
+    console.error("Error al obtener productos: ", error);
+    mostrarErrorProductos("Error de conexión con el servidor");
+  }
+}
+
+function mostrarErrorProductos(mensaje) {
+  const gridZap = document.getElementById('gridZapatillas');
+  const gridRopa = document.getElementById('gridRopa');
+  gridZap.innerHTML = `<p class="error-msg">${mensaje}</p>`;
+  gridRopa.innerHTML = '';
+}
+
+let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+
+const nombre = sessionStorage.getItem('nombreUsuario') || 'Invitado';
+document.getElementById('nombreUsuario').textContent = nombre + '!';
+
+function renderProductos() {
+  const gridZap = document.getElementById('gridZapatillas');
+  const gridRopa = document.getElementById('gridRopa');
+  gridZap.innerHTML = '';
+  gridRopa.innerHTML = '';
+
+  productos.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-img" style="${p.img ? `background-image:url('${p.img}');background-size:cover;` : ''}"></div>
+      <div class="card-nombre">${p.nombre}</div>
+      <div class="card-precio">$${p.precio.toLocaleString('es-AR')}</div>
+      <button class="card-btn" onclick="agregarAlCarrito(${p.id}, this)">Agregar al carrito</button>
+    `;
+    if (p.categoria === CATEGORIA_ZAPATILLAS) gridZap.appendChild(card);
+    else if (p.categoria === CATEGORIA_ROPA) gridRopa.appendChild(card);
+  });
+}
+
+/* ===== Carrito ===== */
+function guardarCarrito() {
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+}
+
+function agregarAlCarrito(id, btn) {
+  const item = carrito.find(i => i.id === id);
+  if (item) item.cantidad++;
+  else carrito.push({ id, cantidad: 1 });
+  guardarCarrito();
+  actualizarContador();
+  renderDrawer();
+
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = '✓ Agregado';
+    btn.classList.add('agregado');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('agregado');
+    }, 1000);
+  }
+}
+
+function cambiarCantidad(id, delta) {
+  const item = carrito.find(i => i.id === id);
+  if (!item) return;
+  item.cantidad += delta;
+  if (item.cantidad <= 0) {
+    carrito = carrito.filter(i => i.id !== id);
+  }
+  guardarCarrito();
+  actualizarContador();
+  renderDrawer();
+}
+
+function actualizarContador() {
+  const total = carrito.reduce((acc, i) => acc + i.cantidad, 0);
+  const countEl = document.getElementById('cartCount');
+  if (total > 0) {
+    countEl.style.display = 'flex';
+    countEl.textContent = total;
+  } else {
+    countEl.style.display = 'none';
+  }
+}
+
+function renderDrawer() {
+  const body = document.getElementById('drawerBody');
+  const totalEl = document.getElementById('drawerTotal');
+
+  if (carrito.length === 0) {
+    body.innerHTML = '<div class="drawer-vacio">Tu carrito está vacío! agrega un producto para empezar a comprar.</div>';
+    totalEl.textContent = '$0';
+    return;
+  }
+
+  let total = 0;
+  body.innerHTML = carrito.map(i => {
+    const p = productos.find(prod => prod.id === i.id);
+    total += p.precio * i.cantidad;
+    return `
+      <div class="drawer-item">
+        <img src="${p.img || 'https://via.placeholder.com/54'}" alt="${p.nombre}">
+        <div class="drawer-item-info">
+          <div class="drawer-item-nombre">${p.nombre}</div>
+          <div class="drawer-item-precio">$${p.precio.toLocaleString('es-AR')}</div>
+          <div class="drawer-item-qty">
+            <button class="qty-btn" onclick="cambiarCantidad(${p.id}, -1)">−</button>
+            <span>${i.cantidad}</span>
+            <button class="qty-btn" onclick="cambiarCantidad(${p.id}, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  totalEl.textContent = '$' + total.toLocaleString('es-AR');
+}
+
+function toggleDrawer(abrir) {
+  document.getElementById('drawer').classList.toggle('show', abrir);
+  document.getElementById('overlay').classList.toggle('show', abrir);
+}
+
+function finalizarCompra() {
+  if (carrito.length === 0) return;
+  alert('¡Gracias por tu compra, ' + nombre + '!');
+  carrito = [];
+  guardarCarrito();
+  actualizarContador();
+  renderDrawer();
+  toggleDrawer(false);
+}
+
+/* ===== Init ===== */
+cargarProductos();
+actualizarContador();
+</script>
+
+</body>
+</html>

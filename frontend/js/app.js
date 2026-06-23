@@ -1,40 +1,30 @@
-
 const contenedorProductos = document.getElementById("contenedor-productos");
-
 const url = "http://localhost:3000/api/products/";
 
 async function obtenerProductos() {
     try {
-
         const response = await fetch(url);
         console.log(response);
-
-        // Optimizacion 1: Verificamos que la respuesta HTTP fue exitosa
+        // Verificamos que la respuesta HTTP fue exitosa OP1 del profe
         if (!response.ok) {
             // Traemos el message que devuelve el 500
             const parsedResponse = await response.json();
             throw new Error(`${parsedResponse.message}`);
         }
 
-        // Optimizacion 2: Destructuring directo
+        //  Destructuring directo op2clase
         const { payload } = await response.json();
-        // const productos = data.payload;
-       console.log(payload);
-        
+        console.log(payload);
         renderizarProductos(payload);
-
     } catch (error) {
         console.error(error);
-        // Optimizacion 3: Creamos una funcion que crea parrafos con formato error y el mensaje
-        // Mostramos el error en el DOM
+        //Creamos una funcion que crea parrafos con formato error y el mensaje. Mostramos el error en el DOM
         mostrarError(error);
     }
-
 }
 
 function renderizarProductos(array) {
     let htmlProductos = "";
-
     array.forEach(producto => {
         htmlProductos += `
             <div class="card-producto">
@@ -45,16 +35,12 @@ function renderizarProductos(array) {
             </div>
         `;
     });
-
     contenedorProductos.innerHTML = htmlProductos;
 }
 
 function mostrarError(mensaje) {
     contenedorProductos.innerHTML = `
         <p class="mensaje mensaje-error">${mensaje}</p>
-    `;
-}
+    `;}
 
 obtenerProductos();
-
-

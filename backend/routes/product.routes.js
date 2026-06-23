@@ -8,25 +8,20 @@ import { createProduct, getAllProducts, getProductById, modifyProduct, removePro
 
 const router = Router();
 
-
 // GET all products
 router.get("/", getAllProducts);
-
 
 // GET by id
 router.get("/:id", validateId, getProductById);
 
-
 // POST product
 router.post("/", validateProduct, createProduct);
 
-
 // UPDATE product
-router.put("/", modifyProduct);
-
+router.put("/:id", validateId, modifyProduct);
 
 // DELETE product
 router.delete("/:id", validateId, removeProduct);
 
-// Exportamos todas las rutas y las centralizamos en el archivo de barril -> index.js
+// Exportamos todas las rutas y las centralizamos en el archivo index.js
 export default router;
