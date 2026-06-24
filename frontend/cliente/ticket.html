@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sport & Sweet · Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --rosa:#f9c6d0;
+    --lila:#ddb8f0;
+    --fondo:#fdf6f9;
+    --texto:#2d1f2e;
+    --gris:#9a8a9b;
+  }
+  body{background:var(--fondo);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.5;animation:blobFloat ease-in-out infinite;}
+  .blob1{width:500px;height:500px;background:var(--rosa);top:-150px;left:-100px;animation-duration:12s;}
+  .blob2{width:400px;height:400px;background:var(--lila);bottom:-100px;right:-100px;animation-duration:16s;animation-delay:-4s;}
+  @keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(20px,-20px) scale(1.05);}66%{transform:translate(-15px,15px) scale(0.95);}}
+  header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:24px 40px;}
+  .logo-img{height:48px;object-fit:contain;}
+  .alumnos{font-size:12px;color:var(--gris);letter-spacing:1px;text-transform:uppercase;}
+  main{position:relative;z-index:10;max-width:520px;margin:0 auto;padding:20px 20px 80px;display:flex;flex-direction:column;align-items:center;}
+  .ticket{background:white;border-radius:20px;width:100%;box-shadow:0 8px 40px rgba(249,198,208,0.25);overflow:hidden;margin-bottom:28px;}
+  .ticket-header{background:linear-gradient(135deg,var(--rosa),var(--lila));padding:28px 28px 20px;text-align:center;}
+  .ticket-empresa{font-family:'Playfair Display',serif;font-size:26px;font-style:italic;color:var(--texto);margin-bottom:4px;}
+  .ticket-subtitulo{font-size:12px;color:var(--texto);opacity:0.7;letter-spacing:1px;}
+  .ticket-cuerpo{padding:24px 28px;}
+  .ticket-info{display:flex;justify-content:space-between;font-size:13px;color:var(--gris);margin-bottom:20px;padding-bottom:16px;border-bottom:1px dashed rgba(0,0,0,0.1);}
+  .ticket-info span strong{color:var(--texto);}
+  .ticket-item{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);}
+  .ticket-item:last-child{border-bottom:none;}
+  .ticket-item-nombre{flex:1;}
+  .ticket-item-qty{color:var(--gris);font-size:13px;margin:0 16px;}
+  .ticket-item-precio{font-weight:500;}
+  .ticket-total{display:flex;justify-content:space-between;font-size:17px;font-weight:500;padding:16px 0 0;border-top:1px dashed rgba(0,0,0,0.1);margin-top:8px;}
+  .ticket-footer{text-align:center;padding:16px 28px 24px;font-size:12px;color:var(--gris);border-top:1px dashed rgba(0,0,0,0.1);}
+  .botones{display:flex;flex-direction:column;gap:12px;width:100%;}
+  .btn-pdf{width:100%;padding:15px;border-radius:14px;border:1.5px solid rgba(0,0,0,0.1);background:white;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;}
+  .btn-pdf:hover{border-color:var(--lila);}
+  .btn-nueva-compra{width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--rosa),var(--lila));color:var(--texto);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(249,198,208,0.4);}
+  .btn-nueva-compra:hover{transform:translateY(-2px);}
+  .footer-link{position:fixed;bottom:20px;right:24px;z-index:10;font-size:11px;color:rgba(0,0,0,0.2);text-decoration:none;letter-spacing:1px;}
+  @media(max-width:600px){header{padding:18px 20px;}}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+</div>
+
+<header>
+  <img class="logo-img" src="../assets/img/logo.png" alt="Sport & Sweet logo">
+  <div class="alumnos">Buenaventura · Torres</div>
+</header>
+
+<main>
+  <!--
+    id="ticketParaPDF" es importante: la libreria html2pdf
+    va a tomar exactamente este elemento y convertirlo a PDF
+  -->
+  <div class="ticket" id="ticketParaPDF">
+
+    <!-- Cabecera con nombre y subtitulo de la empresa -->
+    <div class="ticket-header">
+      <div class="ticket-empresa">Sport & Sweet</div>
+      <div class="ticket-subtitulo">COMPROBANTE DE COMPRA</div>
+    </div>
+
+    <div class="ticket-cuerpo">
+
+      <!--
+        Nombre del cliente y fecha.
+        Los ids ticketNombre y ticketFecha son los que
+        el JS va a buscar para insertar los valores
+        que vienen del sessionStorage
+      -->
+      <div class="ticket-info">
+        <span>Cliente: <strong id="ticketNombre"></strong></span>
+        <span>Fecha: <strong id="ticketFecha"></strong></span>
+      </div>
+
+      <!--
+        Contenedor vacio que el JS va a llenar
+        con una fila por cada producto comprado
+      -->
+      <div id="ticketItems"></div>
+
+      <!--
+        Total de la compra — tambien se llena con JS
+      -->
+      <div class="ticket-total">
+        <span>Total</span>
+        <span id="ticketTotal"></span>
+      </div>
+    </div>
+
+    <div class="ticket-footer">
+      ¡Gracias por tu compra! Volvé pronto.
+    </div>
+  </div>
+
+  <div class="botones">
+    <button class="btn-pdf" onclick="descargarPDF()">Descargar ticket en PDF</button>
+    <button class="btn-nueva-compra" onclick="nuevaCompra()">Nueva compra</button>
+  </div>
+</main>
+
+<a class="footer-link" href="http://localhost:3000/admin/login">Administración</a>
+
+<!--
+  html2pdf es una libreria que convierte elementos HTML a PDF.
+  Tiene que estar antes del script para que este pueda usarla.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+  /*
+    Leemos todo lo que guardo confirmarCompra() en sessionStorage.
+    Acordate que sessionStorage persiste entre paginas
+    de la misma pestana del navegador, por eso podemos
+    leerlo aca aunque lo guardamos en productos.html
+  */
+  const nombre  = sessionStorage.getItem('nombreUsuario') || 'Invitado';
+  const fecha   = sessionStorage.getItem('ticketFecha')   || new Date().toLocaleDateString('es-AR');
+  const total   = Number(sessionStorage.getItem('ticketTotal') || 0);
+
+  /*
+    ticketProductos es un string JSON que guardamos en productos.html.
+    JSON.parse lo convierte de string a array de objetos JS.
+    Cada objeto tiene: { id, nombre, cantidad, precio }
+  */
+  const productos = JSON.parse(sessionStorage.getItem('ticketProductos') || '[]');
+
+  /* Insertamos los valores en el HTML */
+  document.getElementById('ticketNombre').textContent = nombre;
+  document.getElementById('ticketFecha').textContent  = fecha;
+  document.getElementById('ticketTotal').textContent  = '$' + total.toLocaleString('es-AR');
+
+  /*
+    Recorremos el array de productos.
+    Por cada uno creamos una fila con nombre, cantidad y subtotal.
+    innerHTML += agrega cada fila sin borrar las anteriores.
+  */
+  const contenedorItems = document.getElementById('ticketItems');
+
+  if (productos.length === 0) {
+    contenedorItems.innerHTML = '<p style="color:var(--gris);font-size:14px;padding:8px 0;">No hay productos.</p>';
+  } else {
+    productos.forEach(item => {
+      // subtotal = precio unitario x cantidad de ese producto
+      const subtotal = item.precio * item.cantidad;
+      contenedorItems.innerHTML += `
+        <div class="ticket-item">
+          <span class="ticket-item-nombre">${item.nombre}</span>
+          <span class="ticket-item-qty">x${item.cantidad}</span>
+          <span class="ticket-item-precio">$${subtotal.toLocaleString('es-AR')}</span>
+        </div>
+      `;
+    });
+  }
+
+  /*
+    descargarPDF toma el elemento del ticket y lo convierte a PDF.
+    html2pdf() crea el conversor.
+    .set(opciones) le dice el formato, nombre de archivo, calidad.
+    .from(elemento) le dice que elemento convertir.
+    .save() lo descarga automaticamente.
+  */
+  function descargarPDF() {
+    const elemento = document.getElementById('ticketParaPDF');
+    const opciones = {
+      margin: 10,
+      filename: `ticket-sport-and-sweet-${fecha}.pdf`,
+      image:       { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },  // escala alta para que salga nitido
+      jsPDF:       { unit: 'mm', format: 'a5', orientation: 'portrait' }
+    };
+    html2pdf().set(opciones).from(elemento).save();
+  }
+
+  /*
+    nuevaCompra limpia TODO y vuelve a bienvenida.html.
+    Esto es lo que hace que sea un autoservicio:
+    cada compra es independiente, el sistema se reinicia completamente.
+    - sessionStorage: borra nombre, productos, total y fecha del ticket
+    - localStorage: borra el carrito
+  */
+  function nuevaCompra() {
+    sessionStorage.removeItem('nombreUsuario');
+    sessionStorage.removeItem('ticketProductos');
+    sessionStorage.removeItem('ticketTotal');
+    sessionStorage.removeItem('ticketFecha');
+    localStorage.removeItem('carrito');
+    window.location.href = 'bienvenida.html';
+  }
+</script>
+
+</body>
+</html>

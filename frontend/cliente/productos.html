@@ -318,6 +318,23 @@
     <button class="drawer-btn" onclick="finalizarCompra()">Finalizar compra</button>
   </div>
 </aside>
+<!--
+  agregamos un modal de confirmacion para que el usuario
+  pueda revisar el total de la compra antes de continuar.
+  si confirma, se genera el ticket y se redirige a ticket.html
+-->
+
+<div class="modal-overlay" id="modalOverlay" style="display:none;position:fixed;inset:0;background:rgba(45,31,46,0.4);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--fondo);border-radius:24px;padding:36px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;margin-bottom:12px;">Confirmar compra</h3>
+    <p id="modalTexto" style="font-size:14px;color:var(--gris);margin-bottom:28px;line-height:1.6;"></p>
+    <div style="display:flex;gap:12px;">
+      <button onclick="cerrarModal()" style="flex:1;padding:13px;border-radius:14px;border:1.5px solid rgba(0,0,0,0.1);background:white;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;">Cancelar</button>
+      <button onclick="confirmarCompra()" style="flex:1;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--rosa),var(--lila));color:var(--texto);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;">Sí, comprar</button>
+    </div>
+  </div>
+</div>
+
 
 <script>
 /* despues pasar a un archivo JS aparte, pero por ahora lo dejo aca para que sea mas facil de probar */
@@ -339,7 +356,7 @@ async function cargarProductos() {
     }
 
     // Normalizamos los nombres de campos del back a los que usa el render
-    productos = data.payload.map(p => ({
+    productos = data.payload.filter(p => p.active).map(p => ({
       id: p.id,
       nombre: p.name,
       precio: Number(p.price),
@@ -474,12 +491,49 @@ function toggleDrawer(abrir) {
 
 function finalizarCompra() {
   if (carrito.length === 0) return;
-  alert('¡Gracias por tu compra, ' + nombre + '!');
+  // Calculamos el total para mostrarlo en el modal
+  const total = carrito.reduce((acc, item) => {
+    const p = productos.find(prod => prod.id === item.id);
+    return acc + (p ? p.precio * item.cantidad : 0);
+  }, 0);
+
+  // Mostramos el modal con el total
+  document.getElementById('modalTexto').textContent =
+    `¿Confirmás la compra por $${total.toLocaleString('es-AR')}?`;
+  const modal = document.getElementById('modalOverlay');
+  modal.style.display = 'flex';
+}
+
+function cerrarModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+}
+
+function confirmarCompra() {
+  cerrarModal();
+
+  // Guardamos los datos del ticket en sessionStorage para que ticket.html los lea
+  const itemsVenta = carrito.map(item => {
+    const p = productos.find(prod => prod.id === item.id);
+    return {
+      id: item.id,
+      nombre: p.nombre,
+      cantidad: item.cantidad,
+      precio: p.precio
+    };
+  });
+
+  const total = itemsVenta.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+
+  sessionStorage.setItem('ticketProductos', JSON.stringify(itemsVenta));
+  sessionStorage.setItem('ticketTotal', total);
+  sessionStorage.setItem('ticketFecha', new Date().toLocaleDateString('es-AR'));
+
+  // Limpiamos el carrito
   carrito = [];
   guardarCarrito();
-  actualizarContador();
-  renderDrawer();
-  toggleDrawer(false);
+
+  // Vamos al ticket
+  window.location.href = 'ticket.html';
 }
 
 /* ===== Init ===== */
