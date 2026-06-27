@@ -47,7 +47,7 @@ const validateId = (req, res, next) => {
 
 
 // Middleware de ruta para validar los campos de un formulario POST
-const categoriasValidas = ["food", "drink"];
+const categoriasValidas = ["Ropa", "zapatillas"];
 const validateProduct = (req, res, next) => {
 
     // Recogemos los datos del body
@@ -83,9 +83,20 @@ const validateProduct = (req, res, next) => {
     next();
 }
 
+// middleware de proteccion de rutas
+
+const requireLogin = (req, res, next)  => {
+    if(!req.session.user){
+        return res.redirect("/login");
+    }
+
+    next();
+}
+
 
 export {
     loggerURL,
     validateId,
-    validateProduct
+    validateProduct,
+    requireLogin
 }

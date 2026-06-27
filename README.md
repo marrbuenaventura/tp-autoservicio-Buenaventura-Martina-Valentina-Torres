@@ -11,7 +11,7 @@ Aplicación full-stack que permite a los clientes navegar un catálogo de produc
 - **Base de datos:** MySQL (driver `mysql2`)
 - **Motor de vistas:** EJS (panel admin del lado del backend)
 - **Variables de entorno:** dotenv
-- **Frontend (cliente):** HTML, CSS y JavaScript vanilla (sin frameworks)
+- **Frontend (cliente):** HTML, CSS y JavaScript 
 - **Arquitectura:** Router → Controller → Model
 
 ## Estructura del proyecto

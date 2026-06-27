@@ -1,0 +1,18 @@
+<%- include("partials/head.ejs") %>
+
+  <h1><%= about %>></h1>
+
+  <form id="loginForm" class="form-data" method="POST" action="/login">
+     <!-- TO DO, introducir campos REGEX para validar los datos que enviamos -->
+     <label for="emailUser">Email</label>
+     <input type="email" name="email" id="emailUser" required>
+ 
+     <label for="passwordUser">Password</label>
+     <input type="password" name="password" id="passwordUser" required>
+ 
+     <div>
+         <input type="submit" value="Login">
+     </div>
+ </form>
+
+<%- include("partials/footer.ejs") %>

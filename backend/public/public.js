@@ -1,1 +1,0 @@
-/// archivos estáticos que el servidor sirve directamente: CSS y JS del backoffice, y la carpeta uploads donde se guardan las imágenes de los productos

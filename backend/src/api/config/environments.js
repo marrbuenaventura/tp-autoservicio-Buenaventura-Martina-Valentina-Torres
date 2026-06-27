@@ -31,6 +31,7 @@ export default {
     // process.env.PORT lee la variable PORT del .env
     // El || 4000 es un valor por defecto, por si la variable no existe
     port: process.env.PORT || 4000,
+    session_key: process.env.SESSION_KEY,
     database: {
         host: process.env.DB_HOST,
         name: process.env.DB_NAME,
