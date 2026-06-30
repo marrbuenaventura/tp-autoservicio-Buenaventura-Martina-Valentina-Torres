@@ -5,7 +5,7 @@ const urlBase = "http://localhost:3000/api/products";
 let productos = []; // se llena con el fetch
 
 const CATEGORIA_ZAPATILLAS = "zapatillas";
-const CATEGORIA_ROPA = "Ropa";
+const CATEGORIA_ROPA = "ropa";
 
 async function cargarProductos() {
   try {
@@ -170,7 +170,7 @@ function cerrarModal() {
   document.getElementById('modalOverlay').style.display = 'none';
 }
 
-function confirmarCompra() {
+async function confirmarCompra() {
   cerrarModal();
 
   // Guardamos los datos del ticket en sessionStorage para que ticket.html los lea
@@ -185,6 +185,26 @@ function confirmarCompra() {
   });
 
   const total = itemsVenta.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+
+  // Mandamos la venta al backend para que la guarde en la base de datos
+  try {
+    const response = await fetch('http://localhost:3000/api/ventas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usuario: nombre,
+        total: total,
+        productos: itemsVenta
+      })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      console.error('No se pudo registrar la venta:', data.message);
+    }
+  } catch (error) {
+    console.error('Error de conexión al registrar la venta:', error);
+  }
 
   sessionStorage.setItem('ticketProductos', JSON.stringify(itemsVenta));
   sessionStorage.setItem('ticketTotal', total);
