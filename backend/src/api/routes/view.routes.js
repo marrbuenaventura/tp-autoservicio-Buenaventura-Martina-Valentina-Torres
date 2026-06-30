@@ -9,7 +9,7 @@ import { requireLogin } from "../middlewares/middlewares.js";
 const router = Router();
 
 // vista principal admin
-router.get("/index", indexView); // agregar requireLogin pero no tenemos las cosas todavia asiq desp
+router.get("/index", requireLogin, indexView); // agregar requireLogin pero no tenemos las cosas todavia asiq desp
 
 //vista obtener producto
 router.get("/consultar", requireLogin, getProducView);
