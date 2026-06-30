@@ -5,7 +5,7 @@ import session from "express-session" // Middleware para manejar sesiones de usu
 import environments from "./src/api/config/environments.js";
 import { loggerURL } from "./src/api/middlewares/middlewares.js";
 import {join, __dirname} from "./src/api/utils/index.js";
-import {viewRoutes, productRoutes, adminroutes } from "./src/api/routes/index.js";
+import {viewRoutes, productRoutes, adminroutes, ventaRoutes} from "./src/api/routes/index.js";
 
 // Estraemos con el destructuring las variables port y session_key
 const { port, session_key } = environments;
@@ -36,6 +36,7 @@ app.get("/", (req, res) => {
 // http://localhost:3000/api/products es nuestro endpoint, es decir la URL especifica de nuestra API Rest para obtener un recurso
 
 app.use("/api/products", productRoutes);
+app.use("/api/ventas", ventaRoutes);
 app.use("/dashboard", viewRoutes);
 app.use("/login", adminroutes);
 app.use("/cliente", express.static(join(__dirname, "../frontend/cliente")));
