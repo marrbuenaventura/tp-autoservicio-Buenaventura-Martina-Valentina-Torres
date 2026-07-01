@@ -52,7 +52,6 @@ export const getProductById = async (req, res) => {
 // Create new product
 export const createProduct = async (req, res) => {
     try {
-        // Gracias al middleware router.use(express.json()); recibo el JSON como objeto JS al que le puedo aplicar el siguiente destrucuring
         console.log(req.body);
         // Recogemos los datos limpios del body
         const { name, image, category, price, active } = req.body;

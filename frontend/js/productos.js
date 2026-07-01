@@ -1,11 +1,36 @@
+/* =====Logica de la pagina de client, se conecta con el back para traer los productos y maneja el carrito ===== */
 
-/* despues pasar a un archivo JS aparte, pero por ahora lo dejo aca para que sea mas facil de probar */
-/* ===== Conexión con el back ===== */
+/* configuracion */
 const urlBase = "http://localhost:3000/api/products";
-let productos = []; // se llena con el fetch
-
 const CATEGORIA_ZAPATILLAS = "zapatillas";
-const CATEGORIA_ROPA = "ropa";
+const CATEGORIA_ROPA = "Ropa";
+
+/* estado global */
+let productos = []; // se llena con el fetch
+let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+const nombre = sessionStorage.getItem('nombreUsuario') || 'Invitado';
+document.getElementById('nombreUsuario').textContent = nombre + '!';
+
+/* referencias a elementos del DOM */
+const nombreUsuarioEL = document.getElementById('nombreUsuario');
+const gridZapEl = document.getElementById('gridZapatillas');
+const gridRopaEl = document.getElementById('gridRopa');
+const cartCountEl = document.getElementById('cartCount');
+const drawerBodyEl = document.getElementById('drawerBody');
+const drawerTotalEl = document.getElementById('drawerTotal');
+const drawerEl = document.getElementById('drawer');
+const overlayEl = document.getElementById('overlay');
+const modalOverlayEl = document.getElementById('modalOverlay');
+const modalTextoEl = document.getElementById('modalTexto');
+
+nombreUsuarioEL.textContent = nombre;
+
+/* formateo */
+function formatearPrecio(precio) {
+  return '$' + precio.toLocaleString('es-AR');
+}
+
+/* carga de productos */
 
 async function cargarProductos() {
   try {
@@ -35,22 +60,14 @@ async function cargarProductos() {
 }
 
 function mostrarErrorProductos(mensaje) {
-  const gridZap = document.getElementById('gridZapatillas');
-  const gridRopa = document.getElementById('gridRopa');
-  gridZap.innerHTML = `<p class="error-msg">${mensaje}</p>`;
-  gridRopa.innerHTML = '';
+  gridZapEl.innerHTML = `<p class="error-msg">${mensaje}</p>`;
+  gridRopaEl.innerHTML = '';
 }
 
-let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-
-const nombre = sessionStorage.getItem('nombreUsuario') || 'Invitado';
-document.getElementById('nombreUsuario').textContent = nombre + '!';
-
+/* render de la grilla de productos */
 function renderProductos() {
-  const gridZap = document.getElementById('gridZapatillas');
-  const gridRopa = document.getElementById('gridRopa');
-  gridZap.innerHTML = '';
-  gridRopa.innerHTML = '';
+  gridZapEl.innerHTML = '';
+  gridRopaEl.innerHTML = '';
 
   productos.forEach(p => {
     const card = document.createElement('div');
@@ -58,15 +75,15 @@ function renderProductos() {
     card.innerHTML = `
       <div class="card-img" style="${p.img ? `background-image:url('${p.img}');background-size:cover;` : ''}"></div>
       <div class="card-nombre">${p.nombre}</div>
-      <div class="card-precio">$${p.precio.toLocaleString('es-AR')}</div>
+      <div class="card-precio">${formatearPrecio(p.precio)}</div>
       <button class="card-btn" onclick="agregarAlCarrito(${p.id}, this)">Agregar al carrito</button>
     `;
-    if (p.categoria === CATEGORIA_ZAPATILLAS) gridZap.appendChild(card);
-    else if (p.categoria === CATEGORIA_ROPA) gridRopa.appendChild(card);
+    if (p.categoria === CATEGORIA_ZAPATILLAS) gridZapEl.appendChild(card);
+    else if (p.categoria === CATEGORIA_ROPA) gridRopaEl.appendChild(card);
   });
 }
 
-/* ===== Carrito ===== */
+/*logica del Carrito */
 function guardarCarrito() {
   localStorage.setItem('carrito', JSON.stringify(carrito));
 }
@@ -79,15 +96,17 @@ function agregarAlCarrito(id, btn) {
   actualizarContador();
   renderDrawer();
 
-  if (btn) {
-    const original = btn.textContent;
-    btn.textContent = '✓ Agregado';
-    btn.classList.add('agregado');
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove('agregado');
-    }, 1000);
-  }
+  if (btn) mostrarFeedbackBoton(btn);
+}
+
+function mostrarFeedbackBoton(btn) {
+  const original = btn.textContent;
+  btn.textContent = '✓ Agregado';
+  btn.classList.add('agregado');
+  setTimeout(() => {
+    btn.textContent = original;
+    btn.classList.remove('agregado');
+  }, 1000);
 }
 
 function cambiarCantidad(id, delta) {
@@ -102,6 +121,7 @@ function cambiarCantidad(id, delta) {
   renderDrawer();
 }
 
+/* render del drawer y contador lateral*/
 function actualizarContador() {
   const total = carrito.reduce((acc, i) => acc + i.cantidad, 0);
   const countEl = document.getElementById('cartCount');
@@ -116,15 +136,16 @@ function actualizarContador() {
 function renderDrawer() {
   const body = document.getElementById('drawerBody');
   const totalEl = document.getElementById('drawerTotal');
+  const itemsValidos = carrito.filter(i => productos.some(p => p.id === i.id));
 
-  if (carrito.length === 0) {
+  if (itemsValidos.length === 0) {
     body.innerHTML = '<div class="drawer-vacio">Tu carrito está vacío! agrega un producto para empezar a comprar.</div>';
     totalEl.textContent = '$0';
     return;
   }
 
   let total = 0;
-  body.innerHTML = carrito.map(i => {
+  body.innerHTML = itemsValidos.map(i => {
     const p = productos.find(prod => prod.id === i.id);
     total += p.precio * i.cantidad;
     return `
@@ -132,7 +153,7 @@ function renderDrawer() {
         <img src="${p.img || 'https://via.placeholder.com/54'}" alt="${p.nombre}">
         <div class="drawer-item-info">
           <div class="drawer-item-nombre">${p.nombre}</div>
-          <div class="drawer-item-precio">$${p.precio.toLocaleString('es-AR')}</div>
+          <div class="drawer-item-precio">${formatearPrecio(p.precio)}</div>
           <div class="drawer-item-qty">
             <button class="qty-btn" onclick="cambiarCantidad(${p.id}, -1)">−</button>
             <span>${i.cantidad}</span>
@@ -143,7 +164,7 @@ function renderDrawer() {
     `;
   }).join('');
 
-  totalEl.textContent = '$' + total.toLocaleString('es-AR');
+  totalEl.textContent = formatearPrecio(total);
 }
 
 function toggleDrawer(abrir) {
@@ -151,51 +172,49 @@ function toggleDrawer(abrir) {
   document.getElementById('overlay').classList.toggle('show', abrir);
 }
 
+/* modal de confirmacion de compra */
+
+function calcularTotalCarrito(items) {
+  let total = 0;
+  for (const item of items) {
+    const producto = productos.find(p => p.id === item.id);
+    if (producto) {
+      total += producto.precio * item.cantidad;
+    }
+  }
+  return total;
+}
+
 function finalizarCompra() {
   if (carrito.length === 0) return;
-  // Calculamos el total para mostrarlo en el modal
-  const total = carrito.reduce((acc, item) => {
-    const p = productos.find(prod => prod.id === item.id);
-    return acc + (p ? p.precio * item.cantidad : 0);
-  }, 0);
+  const total = calcularTotalCarrito(carrito);
 
-  // Mostramos el modal con el total
   document.getElementById('modalTexto').textContent =
-    `¿Confirmás la compra por $${total.toLocaleString('es-AR')}?`;
-  const modal = document.getElementById('modalOverlay');
-  modal.style.display = 'flex';
+    `¿Confirmás la compra por ${formatearPrecio(total)}?`;
+
+  document.getElementById('modalOverlay').style.display = 'flex';
 }
 
 function cerrarModal() {
   document.getElementById('modalOverlay').style.display = 'none';
 }
 
-async function confirmarCompra() {
-  cerrarModal();
+/* post al back para registrar la venta y redirigir al ticket */
 
-  // Guardamos los datos del ticket en sessionStorage para que ticket.html los lea
-  const itemsVenta = carrito.map(item => {
+function armarItemsVenta() {
+  return carrito.map(item => {
     const p = productos.find(prod => prod.id === item.id);
-    return {
-      id: item.id,
-      nombre: p.nombre,
-      cantidad: item.cantidad,
-      precio: p.precio
-    };
-  });
+    if (!p) return null;
+    return { id: item.id, nombre: p.nombre, cantidad: item.cantidad, precio: p.precio };
+  }).filter(Boolean);
+}
 
-  const total = itemsVenta.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
-
-  // Mandamos la venta al backend para que la guarde en la base de datos
+async function registrarVenta(itemsVenta, total) {
   try {
     const response = await fetch('http://localhost:3000/api/ventas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        usuario: nombre,
-        total: total,
-        productos: itemsVenta
-      })
+      body: JSON.stringify({ usuario: nombre, total, productos: itemsVenta })
     });
 
     if (!response.ok) {
@@ -205,16 +224,25 @@ async function confirmarCompra() {
   } catch (error) {
     console.error('Error de conexión al registrar la venta:', error);
   }
+}
 
+function guardarDatosTicket(itemsVenta, total) {
   sessionStorage.setItem('ticketProductos', JSON.stringify(itemsVenta));
   sessionStorage.setItem('ticketTotal', total);
   sessionStorage.setItem('ticketFecha', new Date().toLocaleDateString('es-AR'));
+}
 
-  // Limpiamos el carrito
+async function confirmarCompra() {
+  cerrarModal();
+
+  const itemsVenta = armarItemsVenta();
+  const total = itemsVenta.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+
+  await registrarVenta(itemsVenta, total);
+  guardarDatosTicket(itemsVenta, total);
+
   carrito = [];
   guardarCarrito();
-
-  // Vamos al ticket
   window.location.href = 'http://localhost:3000/cliente/ticket.html';
 }
 

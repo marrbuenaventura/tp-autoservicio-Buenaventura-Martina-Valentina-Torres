@@ -5,7 +5,7 @@ import session from "express-session" // Middleware para manejar sesiones de usu
 import environments from "./src/api/config/environments.js";
 import { loggerURL } from "./src/api/middlewares/middlewares.js";
 import {join, __dirname} from "./src/api/utils/index.js";
-import {viewRoutes, productRoutes, adminroutes, ventaRoutes} from "./src/api/routes/index.js";
+import {viewRoutes, productRoutes, adminroutes, ventaRoutes, userRoutes} from "./src/api/routes/index.js";
 
 // Estraemos con el destructuring las variables port y session_key
 const { port, session_key } = environments;
@@ -42,6 +42,7 @@ app.use("/login", adminroutes);
 app.use("/cliente", express.static(join(__dirname, "../frontend/cliente")));
 app.use("/css", express.static(join(__dirname, "../frontend/css")));
 app.use("/js", express.static(join(__dirname, "../frontend/js")));
+app.use("/api/users", userRoutes); // rutas de usuarios
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`)

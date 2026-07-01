@@ -1,5 +1,6 @@
 const contenedorProductos = document.getElementById("contenedor-productos");
 const postProductForm = document.getElementById("postProduct-form");
+const postUserForm = document.getElementById("postUser-form");
 
 // Optimizacion 1: Validamos previamente los datos en el cliente
 function validarFormulario(data) {
@@ -20,7 +21,6 @@ function validarFormulario(data) {
     return errores;
 }
 
-
 // Optimizacion 2: Mensaje de exito o error al crear el producto
 // TO DO, le pasamos el errores.length
 function mostrarMensaje(tipo, mensaje) {
@@ -28,9 +28,41 @@ function mostrarMensaje(tipo, mensaje) {
         <p class="mensaje mensaje-${tipo}">${mensaje}</p>
     `;
 }
+//enviando usuario
+postUserForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
 
+    const data = Object.fromEntries(formData.entries());
+    console.table(data);
 
+    const jsonData = JSON.stringify(data);
+    console.log(jsonData);
 
+    try {
+        const response = await fetch("http://localhost:3000/api/users/", {
+            method: "POST", 
+            headers: {"Content-Type": "application/json"},
+            body: jsonData
+        });
+
+        console.log(response);
+        const result = await response.json();
+
+        if (!response.ok) {
+            mostrarMensaje("error", result.message);
+            return;
+        }
+
+        const infoUser = `${result.message} con id ${result.userIDd}`
+        mostrarMensaje("exito", infoUser);
+        event.target.reset();
+    } catch (error){
+        console.error("Error al eviar los datos: ", error);
+    }
+});
+
+// enviando producto
 postProductForm.addEventListener("submit", async event => {
     
     event.preventDefault();
@@ -71,17 +103,6 @@ postProductForm.addEventListener("submit", async event => {
         });
 
         console.log(response);
-        /*
-        body: (...)
-        bodyUsed: true
-        headers: Headers {}
-        ok: true
-        redirected: false
-        status: 201
-        statusText: "Created"
-        type: "cors"
-        url: "http://localhost:3000/api/products/"
-        */
 
         const result = await response.json();
 

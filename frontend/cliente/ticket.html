@@ -20,13 +20,9 @@
 </header>
 
 <main>
-  <!--
-    id="ticketParaPDF" es importante: la libreria html2pdf
-    va a tomar exactamente este elemento y convertirlo a PDF
-  -->
+
   <div class="ticket" id="ticketParaPDF">
 
-    <!-- Cabecera con nombre y subtitulo de la empresa -->
     <div class="ticket-header">
       <div class="ticket-empresa">Sport & Sweet</div>
       <div class="ticket-subtitulo">COMPROBANTE DE COMPRA</div>
@@ -34,26 +30,13 @@
 
     <div class="ticket-cuerpo">
 
-      <!--
-        Nombre del cliente y fecha.
-        Los ids ticketNombre y ticketFecha son los que
-        el JS va a buscar para insertar los valores
-        que vienen del sessionStorage
-      -->
       <div class="ticket-info">
         <span>Cliente: <strong id="ticketNombre"></strong></span>
         <span>Fecha: <strong id="ticketFecha"></strong></span>
       </div>
 
-      <!--
-        Contenedor vacio que el JS va a llenar
-        con una fila por cada producto comprado
-      -->
       <div id="ticketItems"></div>
 
-      <!--
-        Total de la compra — tambien se llena con JS
-      -->
       <div class="ticket-total">
         <span>Total</span>
         <span id="ticketTotal"></span>
@@ -73,13 +56,7 @@
 
 <a class="footer-link" href="http://localhost:3000/dashboard/index">Administración</a>
 
-<!--
-  html2pdf es una libreria que convierte elementos HTML a PDF.
-  Tiene que estar antes del script para que este pueda usarla.
--->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script src="/js/ticket.js"></script>
-
 </body>
 </html>

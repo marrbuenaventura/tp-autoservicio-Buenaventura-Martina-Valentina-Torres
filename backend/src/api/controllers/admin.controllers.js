@@ -1,4 +1,5 @@
 import connection from "../database/db.js";
+import bcrypt from "bcrypt";
 
 export const adminLoginView = async (req,res) => {
     res.render("login", {
@@ -10,35 +11,50 @@ export const adminLoginView = async (req,res) => {
 
 export const processLoginInfo = async (req, res) => {
     try {
-        // Recibimos los datos de los campos email y password
-        // Estos datos, gracias al middleware de parseo de urlencoded ya entran a este endpoint como objetos JS
         const { email, password } = req.body;
 
         // Evitamos una consulta innecesaria
         if(!email || !password) {
-            return res.render("login");            
+            return res.render("login", {
+                title: "login",
+                about: "AUTENTICACION DE USUARIO",
+                error: "Por favor, complete todos los campos"
+            });        
         }
 
-            // TO DO, Crearemos el modelo de usuarios
-        const sql = "SELECT * FROM users where email = ? AND password = ?";
-        const [rows] = await connection.query(sql, [email, password]);
-            //error si no existe admin
-            //guardamos el usurio que recibimos en la variables rows 
+        const sql = "SELECT * FROM users WHERE email = ?";
+        const [rows] = await connection.query(sql, [email]);
 
-            //id name usuario password 
+        if(rows.length === 0){
+            return res.render("login", {
+                title:"login",
+                about: "AUTENTICACION DE USUARIO",
+                error: "Usuario no encontrado"
+            });
+        }
 
             const user = rows[0];
             console.table(user);
 
-            // Una vez que recibimos a nuestro usuario admin, vamos a creada una sesion
-        req.session.user = {
-            id: user.id,
-            name: user.name,
-            email: user.email
+// comparamos el hasheo
+        const match = await bcrypt.compare(password, user.password);
+        console.log(match);
+
+        if(match){
+            req.session.user = {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            }
+            res.redirect("/dashboard/index");
+        } else {
+            return res.render("login", {
+                title:"login",
+                about: "AUTENTICACION DE USUARIO",
+                error: "Contraseña incorrecta"
+            });
         }
 
-        // con la sesion creada redirigimos al dashboard
-        res.redirect("/dashboard/index");
     } catch(error){
         console.log(error);
     }
