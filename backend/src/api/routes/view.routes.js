@@ -1,5 +1,5 @@
 /* =============================
-RUTAS DE VISTAS 
+        RUTAS DE VISTAS 
 ============================= */
 import { Router } from "express";
 import { join, __dirname } from "../utils/index.js";
@@ -9,7 +9,7 @@ import { requireLogin } from "../middlewares/middlewares.js";
 const router = Router();
 
 // vista principal admin
-router.get("/index", requireLogin, indexView); // agregar requireLogin pero no tenemos las cosas todavia asiq desp
+router.get("/index", requireLogin, indexView); 
 
 //vista obtener producto
 router.get("/consultar", requireLogin, getProducView);

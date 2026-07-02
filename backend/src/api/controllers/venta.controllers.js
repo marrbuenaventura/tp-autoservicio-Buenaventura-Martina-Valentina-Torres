@@ -1,3 +1,7 @@
+/*================================
+    Controladores de venta
+================================*/
+
 import VentaModels from '../models/venta.models.js';
 
 export const createVenta = async (req, res) => {

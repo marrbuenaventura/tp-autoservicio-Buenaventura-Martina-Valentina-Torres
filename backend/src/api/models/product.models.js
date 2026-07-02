@@ -1,11 +1,10 @@
-/// las "tablas" de la base de datos pero en código. Un archivo por tabla (Producto, Usuario, Venta, VentaProducto)
 /*==============================================
 Modelos de producto
 ==============================================*/
 
 import connection from '../database/db.js';
 
-// traer todos los productos
+// traer todos los productos de la base de datos
 const selectAllProducts = () => {
     const sql = 'SELECT * FROM products';
     return connection.query(sql);

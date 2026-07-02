@@ -1,4 +1,3 @@
-/// la lógica de cada cosa. Por ejemplo el de productos tiene las funciones de listar, agregar, editar, eliminar
 /*================================
     Controladores de producto
 ================================*/
@@ -57,7 +56,7 @@ export const createProduct = async (req, res) => {
         const { name, image, category, price, active } = req.body;
         const [rows] = await ProductModels.insertNewProduct(name, image, category, price, active);
     
-        //En lugar de 201, devolvemos un 201 "Created"
+        //En lugar de 200, devolvemos un 201 "Created"
         res.status(201).json({
             message: "Producto creado con exito",
             productId: rows.insertId
@@ -106,7 +105,7 @@ export const modifyProduct = async (req, res) => {
 // Delete product
 export const removeProduct = async (req, res) => {
     try {
-        // Reaprovechamos el middleware de ruta validateId (op2)
+        // Reaprovechamos el middleware de ruta validateId 
         await ProductModels.deleteProduct(req.id);
         // la convencion REST habria que devolver para un DELETE exitoso, un codigo 204 No Content
         res.status(200).json({

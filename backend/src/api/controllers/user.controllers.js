@@ -12,7 +12,7 @@ export const createAdminUser = async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(passUser, saltRounds);
 
-        const [rows] = await userModels.insertAdminUser(nameUser, emailUser, hashedPassword);
+        const [rows] = await userModels.insertUser(nameUser, emailUser, hashedPassword);
 
         res.status(201).json({
             message: "Usuario administrador creado exitosamente",

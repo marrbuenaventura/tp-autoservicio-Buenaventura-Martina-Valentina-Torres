@@ -1,5 +1,4 @@
 import express from "express"
-const app = express()
 import cors from "cors"
 import session from "express-session" // Middleware para manejar sesiones de usuario
 import environments from "./src/api/config/environments.js";
@@ -7,15 +6,17 @@ import { loggerURL } from "./src/api/middlewares/middlewares.js";
 import {join, __dirname} from "./src/api/utils/index.js";
 import {viewRoutes, productRoutes, adminroutes, ventaRoutes, userRoutes} from "./src/api/routes/index.js";
 
-// Estraemos con el destructuring las variables port y session_key
+const app = express()
+// Extraemos con el destructuring las variables port y session_key
 const { port, session_key } = environments;
 const PORT = port;
 
+// ===== MIDDLEWARES GLOBALES =====
 app.use(cors())   // Middleware para permitir solicitudes desde cualquier origen (CORS)
 app.use(express.json()) // Middleware para parsear el cuerpo de las solicitudes como JSON
 app.use(express.urlencoded({ extended: true })) // Middleware para parsear el cuerpo de las solicitudes con URL-encoded (formulario)
 app.use(loggerURL); // Middleware personalizado para loguear las URLs de las peticiones
-app.use(express.static(join(__dirname, "src/public"))); // Middleware para servir archivos estaticos
+app.use(express.static(join(__dirname, "src/public"))); // Middleware para servir archivos estaticos del admin (CSS, JS, imágenes)
 
 console.log("SESSION_KEY:", session_key);
 

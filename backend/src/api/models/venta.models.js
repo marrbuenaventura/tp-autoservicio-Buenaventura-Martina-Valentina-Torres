@@ -1,3 +1,6 @@
+/*================================
+    Modelo de venta
+================================*/
 import connection from '../database/db.js';
 
 // Crea el "encabezado" de la venta y devuelve el id generado

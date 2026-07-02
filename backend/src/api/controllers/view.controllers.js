@@ -1,10 +1,10 @@
 /* =============================================
-controladores de vista
+        controladores de vista
 ============================================= */
 import { join, __dirname } from "../utils/index.js";
 import productModels from "../models/product.models.js";
 
-//vista principal
+//vista principal, renderiza el dashboard con el listado completo de productos
 export const indexView = async (req, res) => {
     try {
         const [rows] = await productModels.selectAllProducts();
@@ -12,7 +12,7 @@ export const indexView = async (req, res) => {
             title: "Dashboard", 
             link_estilos: "/css/styles.css",
             about: "Nuestros Productos",
-        productsArray: rows });
+            productsArray: rows });
     } catch (error) {
         console.log("Error al obtener los productos:", error.message);
 

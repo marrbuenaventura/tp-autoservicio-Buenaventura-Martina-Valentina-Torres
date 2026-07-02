@@ -1,5 +1,5 @@
-import connection from "../database/db.js";
 import bcrypt from "bcrypt";
+import UserModels from "../models/user.models.js";
 
 export const adminLoginView = async (req,res) => {
     res.render("login", {
@@ -13,7 +13,7 @@ export const processLoginInfo = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Evitamos una consulta innecesaria
+        // Si faltan campos, volvemos al login con mensaje de error
         if(!email || !password) {
             return res.render("login", {
                 title: "login",
@@ -22,8 +22,8 @@ export const processLoginInfo = async (req, res) => {
             });        
         }
 
-        const sql = "SELECT * FROM users WHERE email = ?";
-        const [rows] = await connection.query(sql, [email]);
+        // Buscamos el usuario por email usando el modelo
+        const [rows] = await UserModels.selectUserByEmail(email);
 
         if(rows.length === 0){
             return res.render("login", {
@@ -48,6 +48,7 @@ export const processLoginInfo = async (req, res) => {
             }
             res.redirect("/dashboard/index");
         } else {
+            // Contraseña incorrecta: volvemos al login con mensaje de error
             return res.render("login", {
                 title:"login",
                 about: "AUTENTICACION DE USUARIO",
@@ -60,7 +61,7 @@ export const processLoginInfo = async (req, res) => {
     }
 }
 
-// cerrar sesion
+// cerrar sesion y redirige al login
 export const destroyLogin = (req, res) => {
     req.session.destroy((error) => {
         if (error){
