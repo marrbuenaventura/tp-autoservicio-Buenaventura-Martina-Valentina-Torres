@@ -55,7 +55,7 @@ function nuevaCompra() {
   sessionStorage.removeItem('ticketTotal');
   sessionStorage.removeItem('ticketFecha');
   localStorage.removeItem('carrito');
-  window.location.href = "/cliente/bienvenida.html";
+  window.location.href = "/cliente/productos.html";
 }
 
 function init() {
