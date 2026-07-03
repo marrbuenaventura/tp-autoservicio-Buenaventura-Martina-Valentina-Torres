@@ -1,7 +1,4 @@
-/* ===== Google Fonts ===== */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap');
-
-/* ===== Paleta pastel ===== */
+/* ===== Paleta de colores ===== */
 :root {
     --fondo: #fdf6f9;
     --superficie: rgba(255,255,255,0.7);
@@ -53,7 +50,8 @@ body::after {
 
 /* ===== Header / Nav ===== */
 header {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 10;
     display: flex;
     align-items: center;

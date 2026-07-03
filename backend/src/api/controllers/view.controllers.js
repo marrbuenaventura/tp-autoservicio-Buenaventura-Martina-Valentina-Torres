@@ -9,8 +9,7 @@ export const indexView = async (req, res) => {
     try {
         const [rows] = await productModels.selectAllProducts();
         res.render("index", { 
-            title: "Dashboard", 
-            link_estilos: "/css/styles.css",
+            title: "Dashboard",
             about: "Nuestros Productos",
             productsArray: rows });
     } catch (error) {
@@ -26,7 +25,6 @@ export const indexView = async (req, res) => {
 export const getProducView = (req, res) => {
     res.render("get",
         { title: "consultar",
-            link_estilos: "/css/styles.css",
             about: "obtener producto por id: "
         });
 }
@@ -35,7 +33,6 @@ export const getProducView = (req, res) => {
 export const createPorductView = (req, res) => {
     res.render("post",
         { title: "crear",
-            link_estilos: "/css/styles.css",
         about: "crear producto"
         });
 }
@@ -44,7 +41,6 @@ export const createPorductView = (req, res) => {
 export const updateProductView = (req, res) => {
     res.render("put", {
         title: "modificar",
-        link_estilos: "/css/styles.css",
         about: "consultar producto por id: "});
 }
 
@@ -52,7 +48,6 @@ export const updateProductView = (req, res) => {
 export const deleteProductView = (req, res) => {
     res.render("delete", {
         title: "eliminar",
-        link_estilos: "/css/styles.css",
         about: "consultar producto por id: "
     })
 }

@@ -1,78 +1,57 @@
 import bcrypt from "bcrypt";
 import UserModels from "../models/user.models.js";
 
-export const adminLoginView = async (req,res) => {
-    res.render("login", {
+const renderLogin = (res, error = null) => {
+    return res.render("login", {
         title: "login de usuario de administrador",
-        link_estilos: "/css/styles.css",
-        about: "AUTENTICACION DE USUARIO"
-    })
-}
+        about: "AUTENTICACION DE USUARIO",
+        error
+    });
+};
+
+export const adminLoginView = async (req, res) => {
+    renderLogin(res);
+};
 
 export const processLoginInfo = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Si faltan campos, volvemos al login con mensaje de error
-        if(!email || !password) {
-            return res.render("login", {
-                title: "login",
-                about: "AUTENTICACION DE USUARIO",
-                error: "Por favor, complete todos los campos"
-            });        
+        if (!email || !password) {
+            return renderLogin(res, "Por favor, complete todos los campos");
         }
 
-        // Buscamos el usuario por email usando el modelo
         const [rows] = await UserModels.selectUserByEmail(email);
-
-        if(rows.length === 0){
-            return res.render("login", {
-                title:"login",
-                about: "AUTENTICACION DE USUARIO",
-                error: "Usuario no encontrado"
-            });
+        if (rows.length === 0) {
+            return renderLogin(res, "Usuario no encontrado");
         }
-
-            const user = rows[0];
-            console.table(user);
-
-// comparamos el hasheo
+        
+        const user = rows[0];
         const match = await bcrypt.compare(password, user.password);
-        console.log(match);
-
-        if(match){
-            req.session.user = {
-                id: user.id,
-                name: user.name,
-                email: user.email
-            }
-            res.redirect("/dashboard/index");
-        } else {
-            // Contraseña incorrecta: volvemos al login con mensaje de error
-            return res.render("login", {
-                title:"login",
-                about: "AUTENTICACION DE USUARIO",
-                error: "Contraseña incorrecta"
-            });
+        if (!match) {
+            return renderLogin(res, "Contraseña incorrecta");
         }
 
-    } catch(error){
+        req.session.user = {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        };
+
+        return res.redirect("/dashboard/index");
+    } catch (error) {
         console.log(error);
     }
-}
+};
 
 // cerrar sesion y redirige al login
 export const destroyLogin = (req, res) => {
     req.session.destroy((error) => {
         if (error){
-            //mensaje error, error
             console.log("No se ha podido cerrar la sesion", error);
-            // return status 500 json mensaje error
             return res.status(500).json({
-                message: "error al cerrar la sesion"
+                message: "Error interno del servidor"
             });
         }
-
         res.redirect("/login");
     })
 }

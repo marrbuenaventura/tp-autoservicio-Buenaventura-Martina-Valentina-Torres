@@ -1,4 +1,3 @@
-///funciones que se ejecutan antes de llegar al controller. En este caso dos: uno que verifica que el admin esté logueado, otro que valida que los datos que llegan estén bien
 /*========================
     Middlewares
 ========================*/
@@ -8,28 +7,12 @@ const loggerURL = (req, res, next) => {
     let fecha = new Date();
     console.log(`[${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}] ${req.method} ${req.url}`);
     
-    next(); // next() da paso a que continue la respuesta o el siguiente middleware (en caso de haberlo)
+    next(); 
 };
-
-/* 
-// Middleware para parsear JSON en las solcitudes POST y PUT
-app.use(express.json()); // sin esto, recibe como undefined
-
-Para un eventual envio nativo de datos con HTML <form>
-app.use(
-    express.urlencoded({
-        extended: true,
-        inflate: true,
-        limit: "1mb",
-        parameterLimit: 5000,
-        type: "application/x-www-form-urlencoded",
-    })
-);*/
-
 
 // Middleware de ruta (se aplica en ciertos endpoints)
 const validateId = (req, res, next) => {
-    const id = Number(req.params.id); // Transformo el id a un numbero
+    const id = Number(req.params.id); 
 
     // Si no es un entero o es 0 o inferior, devuelvo una respuesta 400 (Bad Request)
     if (!Number.isInteger(id) || id <= 0) {
@@ -38,22 +21,15 @@ const validateId = (req, res, next) => {
         });
     }
 
-    // Incorporo el id a la req
     req.id = id;
 
-    next(); // Damos paso al siguiente middleware o a procesar la respuesta
+    next(); 
 }
 
-
-
-// Middleware de ruta para validar los campos de un formulario POST
 const categoriasValidas = ["Ropa", "zapatillas"];
 const validateProduct = (req, res, next) => {
 
-    // Recogemos los datos del body
     const { name, price, category } = req.body;
-
-    // Array vacio de errores
     const errores = [];
 
     // Validamos si se recibieron todos del body
@@ -84,7 +60,6 @@ const validateProduct = (req, res, next) => {
 }
 
 // middleware de proteccion de rutas
-
 const requireLogin = (req, res, next)  => {
     if(!req.session.user){
         return res.redirect("/login");
@@ -92,7 +67,6 @@ const requireLogin = (req, res, next)  => {
 
     next();
 }
-
 
 export {
     loggerURL,

@@ -1,68 +1,115 @@
-# tp-autoservicio-Buenaventura-Martina-Valentina-Torres
-Sistema de autoservicio para venta de ropa deportiva. Proyecto integrador de Programación III — UTN Avellaneda. 
+# TP Autoservicio - Buenaventura Martina & Torres Valentina
+
+Sistema de autoservicio para la venta de ropa deportiva desarrollado como Proyecto Integrador de Programación III - UTN Facultad Regional Avellaneda.
 
 ## Descripción
 
-Aplicación full-stack que permite a los clientes navegar un catálogo de productos (zapatillas y ropa deportiva), agregarlos a un carrito y simular una compra. Incluye además un panel de administración protegido por login para gestionar el catálogo.
+Aplicación full-stack que permite a los clientes navegar un catálogo de productos deportivos, agregarlos a un carrito y simular una compra.
 
-## Tecnologías
+Además, cuenta con un panel de administración protegido mediante autenticación por sesiones, desde el cual es posible gestionar el catálogo realizando operaciones CRUD.
 
-- **Backend:** Node.js + Express
-- **Base de datos:** MySQL (driver `mysql2`)
-- **Motor de vistas:** EJS (panel admin del lado del backend)
-- **Variables de entorno:** dotenv
-- **Frontend (cliente):** HTML, CSS y JavaScript 
-- **Arquitectura:** Router → Controller → Model
+El backend expone una API REST desarrollada con Express y conectada a una base de datos MySQL, mientras que el panel de administración utiliza EJS como motor de vistas.
+
+---
+
+## Tecnologías utilizadas
+
+### Backend
+
+- Node.js
+- Express.js
+- MySQL (mysql2)
+- EJS
+- express-session
+- bcrypt
+- dotenv
+- cors
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+
+### Arquitectura
+
+- API REST
+- Patrón MVC (Router → Controller → Model)
+
+---
+
+## Arquitectura del proyecto
+
+El proyecto sigue el patrón MVC para separar responsabilidades.
+
+- **Router:** recibe las peticiones HTTP y las dirige al controlador correspondiente.
+- **Controller:** contiene la lógica de negocio, valida la información y prepara la respuesta.
+- **Model:** realiza las consultas a la base de datos.
+- **View (EJS):** renderiza las vistas dinámicas del panel de administración.
+
+---
 
 ## Estructura del proyecto
 
-```
+```text
 tp-autoservicio/
 ├── backend/
 │   ├── controllers/
 │   ├── models/
-│   ├── public/
-│   │   └── img/
 │   ├── routes/
+│   ├── public/
 │   ├── src/
 │   │   └── api/
 │   │       ├── config/
 │   │       ├── database/
 │   │       └── middlewares/
-│   └── views/
+│   ├── views/
+│   └── index.js
+│
 └── frontend/
     ├── assets/
-    │   └── img/
     ├── cliente/
     ├── css/
     └── js/
 ```
 
-## Para usar: 
-
-```bash
-git clone <url-del-repo>
-cd tp-autoservicio
-npm install
-```
-
-Configurar la base de datos MySQL y las variables de conexión (host, usuario, contraseña, nombre de base) según corresponda.
-
-1. Levantar el servidor backend:
-   ```bash
-   node index.js
-   ```
-2. Abrir `bienvenida.html` para ingresar como cliente.
-3. Acceder al panel de administración (servido por el backend desde `views/` con EJS), con usuario `admin` y contraseña `1234`.
+---
 
 ## Funcionalidades
 
-- Pantalla de bienvenida con ingreso de nombre
-- Catálogo de productos dividido en Zapatillas y Ropa
-- Carrito de compras con contador, modificación de cantidades y total
-- Login de administrador con verificación de credenciales
-- Panel de administración para gestión de productos (CRUD)
+### Cliente
 
-## Alumnas:
-- Buenaventura, Martina
-- Torres, Valentina
+- Pantalla de bienvenida.
+- Catálogo de productos.
+- Carrito de compras.
+- Modificación de cantidades.
+- Cálculo automático del total.
+
+### Administrador
+
+- Inicio de sesión.
+- Panel de administración con EJS.
+- Alta de productos.
+- Modificación de productos.
+- Eliminación de productos.
+- Visualización del catálogo.
+
+---
+
+## Dependencias principales
+
+- express
+- mysql2
+- ejs
+- express-session
+- bcrypt
+- cors
+- dotenv
+- nodemon
+
+---
+
+## Autoras
+
+- Buenaventura Martina
+- Torres Valentina

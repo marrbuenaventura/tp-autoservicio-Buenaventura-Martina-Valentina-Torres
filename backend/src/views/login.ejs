@@ -5,12 +5,11 @@
     </h1>
 
     <form id="loginForm" class="form-data" method="POST" action="/login">
-        <!-- TO DO, introducir campos REGEX para validar los datos que enviamos -->
         <label for="emailUser">Email</label>
-        <input type="email" name="email" id="emailUser" value="johnny@melavo.com" required>
+        <input type="email" name="email" id="emailUser" placeholder="tunombre@admin.com" required>
 
         <label for="passwordUser">Password</label>
-        <input type="password" name="password" id="passwordUser" value="melavo" required>
+        <input type="password" name="password" id="passwordUser" placeholder="password" required>
 
         <div>
             <input type="submit" value="Login">
