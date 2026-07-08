@@ -108,6 +108,38 @@ tp-autoservicio/
 - nodemon
 
 ---
+## Instalación y uso
+
+### Requisitos previos
+
+- Node.js instalado
+- MySQL instalado y corriendo localmente
+
+### Pasos
+
+1. Clonar el repositorio
+git clone https://github.com/marrbuenaventura/tp-autoservicio-Buenaventura-Martina-Valentina-Torres.git
+cd tp-autoservicio-Buenaventura-Martina-Valentina-Torres/backend
+
+2. Instalar las dependencias
+npm install
+
+3. Crear la base de datos en MySQL y ejecutar el script de estructura
+mysql -u root -p -e "CREATE DATABASE nombre_de_tu_base"
+mysql -u root -p nombre_de_tu_base < src/api/database/schema.sql
+
+(Opcional) Cargar datos de prueba:
+mysql -u root -p nombre_de_tu_base < src/api/database/seed.sql
+
+4. Configurar las variables de entorno
+
+Copiar .env.example como .env y completar con tus propios datos:
+cp .env.example .env
+
+5. Iniciar el servidor
+npm start
+
+La aplicación quedará disponible en http://localhost:3000 (o el puerto que hayas configurado en .env).
 
 ## Autoras
 
